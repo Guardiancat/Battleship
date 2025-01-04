@@ -1,23 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+
+
 
 namespace Schiffe
 {
     internal class Schlachtfeld
     {
-        private const int groesse = 10;   // Die Feldgröße ist auf 10x10 festgelegt.
-        private Zelle[,] zellen;          // Zellenanordnung
-        private List<Schiff> schiffe;     // Список кораблей
+        // Die Feldgröße ist auf 10x10 festgelegt
+        private const int groesse = 10;
 
+        // Zellenanordnung des Schlachtfelds
+        private Zelle[,] zellen;
+
+        // Liste der Schiffe auf dem Schlachtfeld
+        private List<Schiff> schiffe;
+
+        // Konstruktor zur Initialisierung des Schlachtfelds
         public Schlachtfeld()
         {
             zellen = new Zelle[groesse, groesse];
             schiffe = new List<Schiff>();
 
-            // Initialisierung von Zellen mit Koordinaten
+            // Initialisierung der Zellen mit Koordinaten
             for (int reihe = 0; reihe < groesse; reihe++)
             {
                 for (int spalte = 0; spalte < groesse; spalte++)
@@ -26,13 +32,12 @@ namespace Schiffe
                 }
             }
 
-            // Рандомное размещение кораблей
+            // Zufälliges Platzieren der Schiffe
             Random rand = new Random();
             PlatziereSchiffe(rand);
-
         }
 
-        // Метод для размещения кораблей
+        // Methode zur zufälligen Platzierung der Schiffe
         private void PlatziereSchiffe(Random rand)
         {
             for (byte groesse = 2; groesse <= 5; groesse++)
@@ -40,12 +45,12 @@ namespace Schiffe
                 bool platziert = false;
                 while (!platziert)
                 {
-                    // Рандомные начальные координаты и направление (0 - горизонтально, 1 - вертикально)
-                    int startSpalte = rand.Next(0, groesse);
-                    int startReihe = rand.Next(0, groesse);
+                    // Zufällige Startkoordinaten und Richtung (0 - horizontal, 1 - vertikal)
+                    int startSpalte = rand.Next(0, Schlachtfeld.groesse);
+                    int startReihe = rand.Next(0, Schlachtfeld.groesse);
                     bool istHorizontal = rand.Next(2) == 0;
 
-                    // Проверка, что корабль помещается и не пересекает другие
+                    // Überprüfung, ob das Schiff ins Feld passt und keine Überschneidungen vorliegen
                     if (PasstInsFeld(startReihe, startSpalte, groesse, istHorizontal) &&
                         KeineUeberschneidung(startReihe, startSpalte, groesse, istHorizontal))
                     {
@@ -58,6 +63,8 @@ namespace Schiffe
                         }
                         schiffe.Add(schiff);
                         platziert = true;
+
+                        // Markierung der belegten Zellen
                         foreach (var zelle in schiff.Positionen)
                         {
                             zelle.IstBelegt = true;
@@ -65,8 +72,9 @@ namespace Schiffe
                     }
                 }
             }
-
         }
+
+        // Überprüfung, ob das Schiff ins Spielfeld passt
         private bool PasstInsFeld(int startReihe, int startSpalte, int groesse, bool istHorizontal)
         {
             if (istHorizontal)
@@ -74,19 +82,21 @@ namespace Schiffe
             else
                 return startReihe + groesse <= Schlachtfeld.groesse;
         }
-        // Проверка на отсутствие пересечений с другими кораблями
+
+        // Überprüfung, ob keine Überschneidungen mit anderen Schiffen vorliegen
         private bool KeineUeberschneidung(int startReihe, int startSpalte, int groesse, bool istHorizontal)
         {
             for (int i = 0; i < groesse; i++)
             {
                 int reihe = istHorizontal ? startReihe : startReihe + i;
                 int spalte = istHorizontal ? startSpalte + i : startSpalte;
-                if (zellen[reihe, spalte].IstBelegt)  // Проверяем, занята ли ячейка
+                if (zellen[reihe, spalte].IstBelegt)  // Überprüfung, ob die Zelle belegt ist
                     return false;
             }
             return true;
         }
-        // Проверка попадания
+
+        // Methode zur Überprüfung eines Treffers
         public bool PruefeTreffer(char spalte, int reihe)
         {
             foreach (var schiff in schiffe)
@@ -95,16 +105,16 @@ namespace Schiffe
                 {
                     if (zelle.Spalte == spalte && zelle.Reihe == reihe)
                     {
-                        zelle.IstGetroffen = true;  // Отмечаем попадание
-                        return true;  // Попадание
+                        zelle.IstGetroffen = true;  // Treffer markieren
+                        return true;  // Treffer
                     }
                 }
             }
-            zellen[reihe - 1, spalte - 'A'].IstGetroffen = true;  // Отмечаем промах
-            return false;  // Промах
+            zellen[reihe - 1, spalte - 'A'].IstGetroffen = true;  // Fehlschuss markieren
+            return false;  // Fehlschuss
         }
 
-        // Метод отрисовки поля
+        // Methode zur Darstellung des Schlachtfelds
         public void Zeichnen()
         {
             Console.Clear();
@@ -151,6 +161,5 @@ namespace Schiffe
             }
             Console.WriteLine();
         }
-
     }
 }

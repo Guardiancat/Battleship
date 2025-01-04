@@ -1,81 +1,83 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Schiffe
 {
     internal class Menu
     {
-        
-       readonly Schlachtfeld schlachtfeld = new Schlachtfeld();
+        // Instanz des Schlachtfelds zur Verwaltung des Spielfelds
+        readonly Schlachtfeld schlachtfeld = new Schlachtfeld();
+
+        // Variable zur Steuerung der Hauptmenü-Schleife
         bool close = true;
 
+        // Methode zur Anzeige des Hauptmenüs
         public void MethodHauptMenu()
         {
-
             while (close)
             {
-                
-                Console.ForegroundColor= ConsoleColor.Yellow;
-                Console.WriteLine("   MENU   \n\n   Starten   1 \n\n   Auslogen  2");
+                // Anzeige der Menüoptionen
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("   MENU   \n\n   Starten   1 \n\n   Ausloggen  2");
+
+                // Eingabe des ausgewählten Menüpunktes
                 byte ausGewähltePunkt = Convert.ToByte(Console.ReadLine());
                 Console.Clear();
+
                 switch (ausGewähltePunkt)
                 {
                     case 1:
+                        // Starten des Spiels
                         Console.ForegroundColor = ConsoleColor.Green;
                         SpielMenu();
                         Console.ResetColor();
-                        
                         break;
                     case 2:
+                        // Beenden des Programms
                         close = false;
                         Console.ReadKey(true);
                         break;
                 }
-
-            }   
+            }
         }
+
+        // Methode zur Steuerung des Spielmenüs
         public void SpielMenu()
         {
-            schlachtfeld.Zeichnen();
-           
+            schlachtfeld.Zeichnen(); // Zeichnen des Schlachtfelds
 
             bool imSpiel = true;
 
             while (imSpiel)
             {
-                // Проверка нажатия Esc для выхода
+                // Überprüfung auf ESC-Taste für den Menüwechsel
                 if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape)
                 {
                     Console.Clear();
-                    imSpiel = false;  // Возврат в главное меню
+                    imSpiel = false;  // Zurück zum Hauptmenü
                     break;
                 }
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
 
-                // Ввод координаты по оси X (буква A–J)
+                // Abfrage der X-Koordinate (Buchstabe A–J)
                 Console.WriteLine("\n\nGeben Sie die Koordinate X (A–J) ein und drücken Sie Enter:");
                 string eingabeX = Console.ReadLine().ToUpper();
 
-                // Проверка корректности ввода для X
+                // Validierung der X-Koordinate
                 if (eingabeX.Length == 1 && eingabeX[0] >= 'A' && eingabeX[0] <= 'J')
                 {
-                    char spalteChar = eingabeX[0];  // Преобразуем введённую букву
+                    char spalteChar = eingabeX[0];  // Umwandlung des Buchstabens
 
-                    // Ввод координаты по оси Y (число 1–10)
+                    // Abfrage der Y-Koordinate (Zahl 1–10)
                     Console.WriteLine("Geben Sie die Koordinate Y (1–10) ein und drücken Sie Enter:");
                     string eingabeY = Console.ReadLine();
 
-                    // Проверка корректности ввода для Y
+                    // Validierung der Y-Koordinate
                     if (int.TryParse(eingabeY, out int reihe) && reihe >= 1 && reihe <= 10)
                     {
-                        int spalte = spalteChar - 'A';  // Преобразуем букву в индекс массива (например, 'A' -> 0)
+                        int spalte = spalteChar - 'A';  // Umwandlung in einen Array-Index (z. B. 'A' -> 0)
 
-                        // Проверка на попадание по кораблю
+                        // Überprüfung auf Treffer eines Schiffs
                         if (schlachtfeld.PruefeTreffer(spalteChar, reihe))
                         {
                             Console.WriteLine($"Treffer auf Position {spalteChar}{reihe}!");
@@ -87,7 +89,7 @@ namespace Schiffe
                             Console.ReadKey();
                         }
 
-                        schlachtfeld.Zeichnen();  // Обновляем поле
+                        schlachtfeld.Zeichnen();  // Aktualisierung des Schlachtfelds
                     }
                     else
                     {
@@ -100,16 +102,6 @@ namespace Schiffe
                 }
             }
         }
-
-
-
-
-
-
-
-
     }
-
-
 }
 
