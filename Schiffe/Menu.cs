@@ -10,6 +10,7 @@ namespace Schiffe
         // Variable zur Steuerung der Hauptmenü-Schleife
         bool close = true;
 
+        int versuche = 10;
         // Methode zur Anzeige des Hauptmenüs
         public void MethodHauptMenu()
         {
@@ -44,11 +45,12 @@ namespace Schiffe
         public void SpielMenu()
         {
             schlachtfeld.Zeichnen(); // Zeichnen des Schlachtfelds
-
+            
             bool imSpiel = true;
 
             while (imSpiel)
             {
+                
                 // Überprüfung auf ESC-Taste für den Menüwechsel
                 if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape)
                 {
@@ -56,7 +58,7 @@ namespace Schiffe
                     imSpiel = false;  // Zurück zum Hauptmenü
                     break;
                 }
-
+                Console.WriteLine($"Anzahl der Versuche {versuche}");
                 Console.ForegroundColor = ConsoleColor.Yellow;
 
                 // Abfrage der X-Koordinate (Buchstabe A–J)
@@ -86,6 +88,8 @@ namespace Schiffe
                         else
                         {
                             Console.WriteLine("Fehlschuss! Kein Schiff getroffen.");
+                            versuche= versuche-1;
+
                             Console.ReadKey();
                         }
 
@@ -100,7 +104,22 @@ namespace Schiffe
                 {
                     Console.WriteLine("Ungültige X-Koordinate! Bitte geben Sie einen Buchstaben von A bis J ein.");
                 }
+
+                if (versuche==0 )
+                {
+                    Console.Clear();
+                    imSpiel = false;
+                    GameOwer();
+                }
             }
+
+        }
+        public void GameOwer()
+        {
+            
+            Console.WriteLine("Geme Over");
+            Console.ReadKey();
+            close=false;
         }
     }
 }
